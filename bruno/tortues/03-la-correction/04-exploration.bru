@@ -1,0 +1,32 @@
+meta {
+  name: Exploration
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{hote}}/api/tortues/exploration
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+}
+
+docs {
+  L EXPLORATION — le tableau de sous-documents, et $elemMatch.
+
+  « Les tortues inscrites a ARGOI depuis 2024. »
+
+  Le geste naturel pose les deux conditions a plat sur `programmes` — et rend
+  472 tortues la ou il y en a 341. MongoDB applique chaque condition au TABLEAU,
+  pas a un MEME element : une tortue inscrite a ARGOI en 2019 et a PNTL en 2025
+  satisfait les deux, chacune par un element different.
+
+  `$elemMatch` exige que ce soit le meme element. Et il resserre du meme coup
+  les bornes de l index multicle : 859 cles lues sans, 341 avec.
+
+  Cet appel pose un index le temps de la demonstration et le RETIRE en sortant :
+  il n appartient pas a la correction.
+}

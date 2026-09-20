@@ -1,0 +1,35 @@
+meta {
+  name: R4 — Les dix plus grosses escales
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{hote}}/api/bateaux/requetes/R4
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+  res.body.mesures[0].rendus: eq 10
+}
+
+docs {
+  Au point de depart : 10 lignes, 94 500 documents lus, COLLSCAN.
+
+  Le tonnage d une escale, c est la somme de ses cargaisons. Il n est ecrit
+  NULLE PART : il se recalcule a chaque fois, pour les 94 500 escales, avant de
+  pouvoir en garder dix.
+
+  On n indexe pas une expression. La seule sortie est d ecrire le nombre — un
+  CHAMP CALCULE, qui n est la copie de rien, juste le resultat d un calcul qu on
+  refuse de refaire a chaque lecture.
+
+  `lignes` porte la reponse, deja mise en forme — ce sont EXACTEMENT les lignes
+  que le chargement mongosh a rangees dans la collection `reference`. Si le
+  portage Spring posait une autre question, elles ne colleraient pas.
+
+  Ajouter `?optimisee=true` a l URL pour jouer la version reecrite (elle n a de
+  sens qu une fois la correction posee).
+}

@@ -1,0 +1,41 @@
+meta {
+  name: R2 — Les echecs d un puits, du plus recent
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{hote}}/api/dune/requetes/R2
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+  res.body.mesures[0].rendus: eq 7
+}
+
+docs {
+  Au point de depart : 7 lignes, 37 500 documents lus, COLLSCAN+TRI.
+
+  Une egalite, un intervalle, un tri. Trois choses, et l ordre dans lequel on
+  les met dans un index n est pas indifferent — c est l exercice 2 du sujet.
+
+  C EST ICI QUE LA REQUETE DERIVEE S ARRETE. Le nom qu il faudrait,
+  `findByPuitsAndStatutAndDebutGreaterThanEqualAndDebutLessThanOrderByDebutDesc`,
+  compile, se deploie, et explose a la premiere execution :
+
+      you can't add a second 'debut' expression
+
+  Deux conditions sur le MEME champ s ecrasent. Et `Between`, la sortie
+  evidente, est exclusif des DEUX cotes en Spring Data MongoDB, alors que
+  l intervalle du sujet est [debut, fin[. On passe donc a `@Query`, et le
+  filtre s ecrit en clair. Voir `dune/repo/CollecteRepository.java`.
+
+  `lignes` porte la reponse, deja mise en forme — ce sont EXACTEMENT les lignes
+  que le chargement mongosh a rangees dans la collection `reference`. Si le
+  portage Spring posait une autre question, elles ne colleraient pas.
+
+  Ajouter `?optimisee=true` a l URL pour jouer la version reecrite (elle n a de
+  sens qu une fois la correction posee).
+}

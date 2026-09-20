@@ -1,0 +1,35 @@
+meta {
+  name: R4 — Les dix plus fortes secousses d un puits
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{hote}}/api/dune/requetes/R4
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+  res.body.mesures[0].rendus: eq 10
+}
+
+docs {
+  Au point de depart : 10 lignes, 62 500 documents lus, COLLSCAN+TRI.
+
+  Dix lignes en sortie. Le serveur, lui, lit les 62 500 releves, garde les
+  1 027 du puits, les trie en memoire, et jette 1 017. L etage TRI du plan,
+  c est ca : il ne peut rien rendre avant d avoir tout vu.
+
+  Cote Spring : `findTop10ByPuitsOrderByAmplitudeDescMesureLeDesc`. `Top10`
+  pose le `limit`, les deux `Desc` posent le tri — et l index qui les suivra
+  fera disparaitre l etage TRI.
+
+  `lignes` porte la reponse, deja mise en forme — ce sont EXACTEMENT les lignes
+  que le chargement mongosh a rangees dans la collection `reference`. Si le
+  portage Spring posait une autre question, elles ne colleraient pas.
+
+  Ajouter `?optimisee=true` a l URL pour jouer la version reecrite (elle n a de
+  sens qu une fois la correction posee).
+}

@@ -1,0 +1,37 @@
+headers {
+  Accept: application/json
+}
+
+docs {
+  # 1 · Dune — l exploitation de l epice
+
+  Sujet « dune » de « Connexion complete » : la correction pure MongoDB de
+  « Optimisation d une collection », portee en Spring Data MongoDB.
+
+      collections   regions · puits · contremaitres · plateformes · collectes (37 500) · releves (62 500)
+      au depart     176 085 documents lus pour 191 lignes rendues — 922 lus pour 1 rendu
+      ce qu on y apprend
+                    l index simple · l ordre des cles d un index compose · la reference etendue · le tri bloquant · la requete couverte
+
+  ## Avant d ouvrir quoi que ce soit
+
+  1. La base doit tourner et etre chargee. Elle vient du depot
+     MongoDB_Optimisation, pas de celui-ci :
+
+         cd ../MongoDB_Optimisation && make demarrer && make dune
+
+  2. L application :
+
+         make dune          (depuis la racine de MongoDB_ConnexionComplete)
+
+  L environnement `local` pointe sur http://localhost:8081.
+
+  ## Dans quel ordre
+
+  `00` dit dans quel etat est la base. `01` joue les quatre requetes une par
+  une et montre leurs LIGNES. `02` est le banc : les quatre d un coup, avec ce
+  qu elles coutent. `03` est la correction, et `05-remettre` defait tout.
+
+  Les dossiers `03` ECRIVENT — index, champs recopies. Rien n est perdu :
+  `05-remettre` remet la base dans l etat du chargement sans la recharger.
+}

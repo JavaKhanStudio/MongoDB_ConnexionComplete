@@ -1,0 +1,42 @@
+meta {
+  name: Optimiser (ECRIT)
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{hote}}/api/dune/optimiser
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+  res.body.reponseInchangee: eq true
+}
+
+docs {
+  LA CORRECTION, en un appel.
+
+  Elle fait trois choses, dans cet ordre :
+
+  1. elle remet la base comme au chargement — aucun index, aucune copie — et
+     MESURE. C est le « avant », et il est refait a CHAQUE passage : jamais un
+     chiffre recopie ;
+  2. elle pose ce qu il faut poser, et ecrit ce qu il faut recopier ;
+  3. elle remesure, verifie que les quatre reponses n ont pas bouge, et met les
+     deux tableaux cote a cote.
+
+  Attendu : R1 222 x, R2 5 357 x, R3 382 x, R4 6 250 x — les memes chiffres que
+  `make dune-optimiser` cote mongosh.
+
+  `reponseInchangee: true` dans la reponse JSON est le verdict qui compte : une
+  requete devenue rapide qui ne repond plus a la question n est pas optimisee,
+  elle est fausse.
+
+  POST et non GET, parce que ca ECRIT : des index, et un champ recopie sur des
+  dizaines de milliers de documents. Un GET ne doit jamais faire ca — un
+  navigateur ou un proxy le rejouerait tout seul.
+
+  Tout se defait par `05-remettre`.
+}

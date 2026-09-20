@@ -1,0 +1,26 @@
+meta {
+  name: Dans quel etat est la base
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{hote}}/api/bateaux/etat
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+}
+
+docs {
+  La premiere requete a jouer, et la seule a jouer deux fois : avant et apres la
+  correction.
+
+  « aucun (hors _id) — base au point de depart » veut dire que la base est celle
+  du chargement, et que les chiffres des `SUJET.md` sont ceux qu on va retrouver.
+
+  Si des index apparaissent, quelqu un est passe avant : jouer
+  `03 · La correction / 05-remettre` pour repartir de zero.
+}

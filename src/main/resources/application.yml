@@ -1,0 +1,30 @@
+# ---------------------------------------------------------------------
+#  Ce qui est commun aux trois applications.
+#  Le port et la base, eux, sont dans application-<sujet>.yml.
+# ---------------------------------------------------------------------
+spring:
+  application:
+    name: connexion-complete
+  data:
+    mongodb:
+      host: ${MONGO_HOTE:localhost}
+      port: ${MONGO_PORT:27051}
+      # EXPLICITEMENT false, et c'est tout l'exercice : si Spring posait
+      # les index tout seul au demarrage (a partir de @Indexed et
+      # @CompoundIndex), la mesure « avant » serait deja optimisee et on
+      # ne verrait jamais le COLLSCAN. Ici les index se posent quand on
+      # le demande, par POST /api/<sujet>/optimiser, et pas avant.
+      auto-index-creation: false
+  jackson:
+    # Le document est polymorphe : une collecte REUSSIE n'a pas de
+    # `cause`, une ECHOUEE n'a pas de `tonnes`. Les champs absents le
+    # restent dans la reponse JSON, au lieu de sortir en null.
+    default-property-inclusion: non_null
+
+server:
+  error:
+    include-message: always
+
+logging:
+  level:
+    org.mongodb.driver: WARN

@@ -1,0 +1,34 @@
+meta {
+  name: R3 — Le tonnage d un pavillon, port par port
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{hote}}/api/bateaux/requetes/R3
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+  res.body.mesures[0].rendus: eq 24
+}
+
+docs {
+  Au point de depart : 24 lignes, 118 008 documents lus et 23 508 cles, COLLSCAN+LOOKUP.
+
+  Le pavillon n est PAS dans l escale : il est dans le bateau.
+
+  Le `$group` de ce pipeline porte un `$sum` DANS un `$sum` — le tonnage d une
+  escale est deja une somme. C est un des rares endroits ou l API typee de
+  Spring Data n a pas d ecriture plus claire que le BSON : l etage part tel
+  quel, par `Etapes.brute`. Voir `commun/Etapes.java`.
+
+  `lignes` porte la reponse, deja mise en forme — ce sont EXACTEMENT les lignes
+  que le chargement mongosh a rangees dans la collection `reference`. Si le
+  portage Spring posait une autre question, elles ne colleraient pas.
+
+  Ajouter `?optimisee=true` a l URL pour jouer la version reecrite (elle n a de
+  sens qu une fois la correction posee).
+}

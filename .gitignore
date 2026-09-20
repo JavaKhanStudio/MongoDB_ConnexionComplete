@@ -1,0 +1,15 @@
+# Ce dossier est aussi une planche Atelier (tableau #connexion). Ces deux
+# dossiers appartiennent a la planche, pas au projet, et ne sont jamais
+# publies :
+#   .atelier/  — packs.toml, le texte du contexte de l'etiquette #connexion
+#   .claude/   — des liens symboliques vers ~/Documents/GitHub/atelier/skills/
+# Ne pas les deplacer : atelier/projects/connexion.toml pointe dessus.
+.atelier/
+.claude/
+
+# Le build Maven : trois jars de 27 Mo, refabriques par `make construire`.
+target/
+
+.idea/
+*.iml
+*.log

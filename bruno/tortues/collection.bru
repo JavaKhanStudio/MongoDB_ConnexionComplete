@@ -1,0 +1,37 @@
+headers {
+  Accept: application/json
+}
+
+docs {
+  # 2 · Les tortues — huit ans de suivi
+
+  Sujet « tortues » de « Connexion complete » : la correction pure MongoDB de
+  « Optimisation d une collection », portee en Spring Data MongoDB.
+
+      collections   habitats · sites · especes · programmes · tortues (10 000) · observations (90 000)
+      au depart     280 861 documents lus pour 2 318 lignes rendues — 121 lus pour 1 rendu
+      ce qu on y apprend
+                    la cle etrangere que SQL indexait tout seul · l index multicle sur un tableau · la copie de copie · la selectivite · $elemMatch
+
+  ## Avant d ouvrir quoi que ce soit
+
+  1. La base doit tourner et etre chargee. Elle vient du depot
+     MongoDB_Optimisation, pas de celui-ci :
+
+         cd ../MongoDB_Optimisation && make demarrer && make tortues
+
+  2. L application :
+
+         make tortues          (depuis la racine de MongoDB_ConnexionComplete)
+
+  L environnement `local` pointe sur http://localhost:8082.
+
+  ## Dans quel ordre
+
+  `00` dit dans quel etat est la base. `01` joue les quatre requetes une par
+  une et montre leurs LIGNES. `02` est le banc : les quatre d un coup, avec ce
+  qu elles coutent. `03` est la correction, et `05-remettre` defait tout.
+
+  Les dossiers `03` ECRIVENT — index, champs recopies. Rien n est perdu :
+  `05-remettre` remet la base dans l etat du chargement sans la recharger.
+}

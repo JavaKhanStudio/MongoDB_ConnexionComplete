@@ -1,0 +1,37 @@
+meta {
+  name: Exploration
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{hote}}/api/dune/exploration
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+}
+
+docs {
+  L EXPLORATION — la requete couverte.
+
+  « La date et le puits des 169 collectes de Gurney Halleck, sans lire un seul
+  document. »
+
+  Trois lignes sortent, et la deuxieme est celle qui surprend :
+
+  * `findByContremaitre` — le document entier, 169 documents lus ;
+  * `findProjectedBy...` — une projection Spring Data, et TOUJOURS 169 documents
+    lus : Spring garde `_id`, que personne n a demande, et un seul champ hors
+    index oblige le serveur a ouvrir le document ;
+  * `@Query(fields = "{ '_id' : 0, ... }")` — 0 document lu, plan
+    PROJECTION_COVERED.
+
+  La projection derivee du type de retour NE SAIT PAS retirer `_id`. C est la
+  seule facon de l ecrire en Spring Data.
+
+  Cet appel pose un index le temps de la demonstration et le RETIRE en sortant :
+  il n appartient pas a la correction.
+}

@@ -1,0 +1,25 @@
+meta {
+  name: Les index poses
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{hote}}/api/tortues/index
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+}
+
+docs {
+  Ce qui est pose sur la base, `_id` mis a part.
+
+  A noter : c est l application qui les a poses, EXPLICITEMENT, quand on le lui
+  a demande. `spring.data.mongodb.auto-index-creation` est a `false` dans
+  `application.yml`, et c est tout l exercice : si Spring posait les index tout
+  seul au demarrage a partir de `@Indexed`, la mesure « avant » serait deja
+  optimisee et on ne verrait jamais le COLLSCAN.
+}

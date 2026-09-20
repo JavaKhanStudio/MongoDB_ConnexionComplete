@@ -1,0 +1,37 @@
+meta {
+  name: R1 — Les collectes d un contremaitre
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{hote}}/api/dune/requetes/R1
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+  res.body.mesures[0].rendus: eq 169
+}
+
+docs {
+  Au point de depart : 169 lignes, 37 500 documents lus, COLLSCAN.
+
+  Une egalite sur un champ, et rien d autre. C est la requete que SQL servait
+  sans qu on y pense : la cle etrangere y portait un index, offert avec la
+  contrainte.
+
+  Cote Spring, c est `CollecteRepository.findByContremaitre` — une requete
+  DERIVEE : Spring lit le nom de la methode et fabrique le filtre. Rien a
+  ecrire, et rien qui pose un index : la derivation ne s occupe QUE du filtre.
+
+  Regarder `lus` : 37 500 documents pour en rendre 169.
+
+  `lignes` porte la reponse, deja mise en forme — ce sont EXACTEMENT les lignes
+  que le chargement mongosh a rangees dans la collection `reference`. Si le
+  portage Spring posait une autre question, elles ne colleraient pas.
+
+  Ajouter `?optimisee=true` a l URL pour jouer la version reecrite (elle n a de
+  sens qu une fois la correction posee).
+}

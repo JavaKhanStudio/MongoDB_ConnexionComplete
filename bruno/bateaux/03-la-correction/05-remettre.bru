@@ -1,0 +1,29 @@
+meta {
+  name: Tout defaire (ECRIT)
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{hote}}/api/bateaux/remettre
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+}
+
+docs {
+  La base redevient celle du chargement, SANS la recharger : les index tombent,
+  et les champs que la correction avait recopies s effacent.
+
+  A quoi ca sert : mesurer deux fois de suite dans les memes conditions. Un index
+  pose reste pose ; sans ce bouton, la seule facon de revenir au point de depart
+  serait de tout recharger.
+
+  La liste de ce qu il faut effacer n est pas devinee : la correction l a laissee
+  dans la collection `optimisations`.
+
+  Enchainer avec `02 · Le banc` : les chiffres du depart doivent revenir.
+}

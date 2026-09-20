@@ -1,0 +1,43 @@
+meta {
+  name: Mesurer les quatre
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{hote}}/api/tortues/mesurer
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+  res.body.reponseInchangee: eq true
+  res.body.mesures[0].rendus: eq 754
+  res.body.mesures[1].rendus: eq 179
+  res.body.mesures[2].rendus: eq 41
+  res.body.mesures[3].rendus: eq 1344
+}
+
+docs {
+  LE BANC : les quatre requetes, jouees pour de vrai, et ce qu elles coutent.
+
+  Au point de depart : 280 861 documents lus pour 2 318 lignes rendues — 121 lus pour 1 rendu.
+
+  Lire `tableau` dans la reponse — c est, ligne pour ligne, ce que
+  `make tortues-mesurer` imprime cote mongosh.
+
+  Deux colonnes comptent. `rendus` est ce que la question demande : il ne bougera
+  pas. `lus` est ce que le serveur a du parcourir pour le trouver : c est lui
+  qu on fait tomber. Le jour ou les deux se ressemblent, la requete est optimisee.
+
+  `lus` et `cles` ne sortent PAS d explain() : ils sortent des compteurs du
+  serveur (`serverStatus().metrics.queryExecutor`), releves avant et apres. Ils
+  comptent TOUT, y compris ce qu un `$lookup` va chercher tout seul.
+
+  CONSEQUENCE : le banc suppose qu on est SEUL sur le serveur. Deux navigateurs
+  qui rafraichissent en meme temps, et les deux mesures se melangent.
+
+  `reponseInchangee` est le verdict du juge : les lignes produites sont-elles
+  celles du chargement ?
+}

@@ -1,0 +1,37 @@
+headers {
+  Accept: application/json
+}
+
+docs {
+  # 3 · Les bateaux — quatre ans de trafic
+
+  Sujet « bateaux » de « Connexion complete » : la correction pure MongoDB de
+  « Optimisation d une collection », portee en Spring Data MongoDB.
+
+      collections   ports · bateaux (4 000) · capitaines · escales (94 500)
+      au depart     401 508 documents lus pour 1 026 lignes rendues — 391 lus pour 1 rendu
+      ce qu on y apprend
+                    deux requetes sur quatre qu AUCUN index ne peut servir · la reference etendue · le champ calcule · l index partiel
+
+  ## Avant d ouvrir quoi que ce soit
+
+  1. La base doit tourner et etre chargee. Elle vient du depot
+     MongoDB_Optimisation, pas de celui-ci :
+
+         cd ../MongoDB_Optimisation && make demarrer && make bateaux
+
+  2. L application :
+
+         make bateaux          (depuis la racine de MongoDB_ConnexionComplete)
+
+  L environnement `local` pointe sur http://localhost:8083.
+
+  ## Dans quel ordre
+
+  `00` dit dans quel etat est la base. `01` joue les quatre requetes une par
+  une et montre leurs LIGNES. `02` est le banc : les quatre d un coup, avec ce
+  qu elles coutent. `03` est la correction, et `05-remettre` defait tout.
+
+  Les dossiers `03` ECRIVENT — index, champs recopies. Rien n est perdu :
+  `05-remettre` remet la base dans l etat du chargement sans la recharger.
+}

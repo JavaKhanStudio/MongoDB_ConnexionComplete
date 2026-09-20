@@ -1,0 +1,34 @@
+meta {
+  name: R3 — Score moyen des especes en danger critique
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{hote}}/api/tortues/requetes/R3
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+  res.body.mesures[0].rendus: eq 41
+}
+
+docs {
+  Au point de depart : 41 lignes, 90 861 documents lus et 861 cles, COLLSCAN+LOOKUP.
+
+  Le statut UICN n est pas dans l observation : il est dans l espece de la
+  tortue, recopie dans la tortue. Il faut ouvrir la tortue de chaque observation
+  avant de pouvoir jeter celles qui ne sont pas d une espece en danger critique.
+
+  La copie que la correction ajoute est donc une COPIE DE COPIE — trois endroits
+  a reecrire le jour ou l UICN reclasse une espece.
+
+  `lignes` porte la reponse, deja mise en forme — ce sont EXACTEMENT les lignes
+  que le chargement mongosh a rangees dans la collection `reference`. Si le
+  portage Spring posait une autre question, elles ne colleraient pas.
+
+  Ajouter `?optimisee=true` a l URL pour jouer la version reecrite (elle n a de
+  sens qu une fois la correction posee).
+}

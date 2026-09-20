@@ -1,0 +1,32 @@
+meta {
+  name: R1 — Les observations d un observateur
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{hote}}/api/tortues/requetes/R1
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+  res.body.mesures[0].rendus: eq 754
+}
+
+docs {
+  Au point de depart : 754 lignes, 90 000 documents lus, COLLSCAN.
+
+  Une egalite sur un champ. La cle etrangere vers l observateur portait un
+  index en SQL, offert avec la contrainte ; ici rien n est automatique.
+
+  Cote Spring : `ObservationRepository.findByObservateur`, une requete derivee.
+
+  `lignes` porte la reponse, deja mise en forme — ce sont EXACTEMENT les lignes
+  que le chargement mongosh a rangees dans la collection `reference`. Si le
+  portage Spring posait une autre question, elles ne colleraient pas.
+
+  Ajouter `?optimisee=true` a l URL pour jouer la version reecrite (elle n a de
+  sens qu une fois la correction posee).
+}

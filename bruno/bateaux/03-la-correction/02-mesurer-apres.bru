@@ -1,0 +1,35 @@
+meta {
+  name: Remesurer, version optimisee
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{hote}}/api/bateaux/mesurer?optimisees=true
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+}
+
+docs {
+  Le meme banc, mais avec les requetes REECRITES.
+
+  A comparer avec `02 · Le banc` joue avant la correction : memes questions,
+  memes reponses, autre chemin.
+
+  A ESSAYER AVANT la correction, sur une base au point de depart : la reponse
+  change. Sur `dune`, R3 rend 0 ligne au lieu de 5 et le juge repond
+
+      reponseInchangee: false
+      KO  R3 ne rend plus la meme reponse qu au chargement
+
+  parce que la requete reecrite filtre sur un champ que les documents n ont
+  pas encore. La reecriture SEULE ne suffit pas — et une requete rapide qui ne
+  repond plus a la question n est pas optimisee, elle est fausse.
+
+  C est pour ca que cette requete-ci n affirme que le code 200 : jouee hors
+  sequence, elle DOIT echouer sur le fond.
+}

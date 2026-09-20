@@ -1,0 +1,35 @@
+meta {
+  name: R2 — Les escales d un port sur une annee
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{hote}}/api/bateaux/requetes/R2
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+  res.body.mesures[0].rendus: eq 967
+}
+
+docs {
+  Au point de depart : 967 lignes, 94 500 documents lus, COLLSCAN+TRI.
+
+  Une egalite, un intervalle, un tri — et `@Query`, pour la meme raison que
+  sur les deux autres sujets.
+
+  A noter pour plus tard : un index dont la cle de tete serait l INTERVALLE
+  servirait quand meme le tri et ne lirait pas un document de trop — mais il
+  lirait toutes les cles de l intervalle : 23 239 au lieu de 967. La faute ne se
+  voit que dans la colonne `cles`.
+
+  `lignes` porte la reponse, deja mise en forme — ce sont EXACTEMENT les lignes
+  que le chargement mongosh a rangees dans la collection `reference`. Si le
+  portage Spring posait une autre question, elles ne colleraient pas.
+
+  Ajouter `?optimisee=true` a l URL pour jouer la version reecrite (elle n a de
+  sens qu une fois la correction posee).
+}

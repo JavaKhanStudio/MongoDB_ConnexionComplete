@@ -1,0 +1,36 @@
+meta {
+  name: Exploration
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{hote}}/api/bateaux/exploration
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+}
+
+docs {
+  L EXPLORATION — l index qui n indexe qu une partie des documents.
+
+  Les escales pour avarie sont 4 721 sur 94 500, soit 5 %. Un index ordinaire
+  sur `{ motif: 1, arrivee: 1 }` sert la requete — et range aussi les 95 % dont
+  personne ne demande jamais rien.
+
+      index ordinaire     1 118 208 octets
+      index partiel          73 728 octets    (15,2 fois plus petit)
+
+  `partialFilterExpression` n indexe QUE les documents qui repondent a une
+  condition. Le piege : la requete doit contenir la condition du filtre, sinon
+  le planificateur refuse l index.
+
+  A savoir : `partialFilterExpression` n accepte pas `{ $exists: false }`. Les
+  index partiels de ce projet portent tous sur une egalite.
+
+  Cet appel pose un index le temps de la demonstration et le RETIRE en sortant :
+  il n appartient pas a la correction.
+}

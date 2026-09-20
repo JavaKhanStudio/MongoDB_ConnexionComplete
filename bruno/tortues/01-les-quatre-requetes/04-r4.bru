@@ -1,0 +1,35 @@
+meta {
+  name: R4 — Les tortues portant un tag
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{hote}}/api/tortues/requetes/R4
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+  res.body.mesures[0].rendus: eq 1344
+}
+
+docs {
+  Au point de depart : 1 344 lignes, 10 000 documents lus, COLLSCAN.
+
+  Le tag est dans un TABLEAU. Cote Spring, le parametre est une chaine et la
+  methode s appelle simplement `findByTags` : MongoDB compare la valeur a chaque
+  element du tableau sans qu on ait rien a dire.
+
+  Celle-la gagnera le MOINS des quatre a la correction — sept fois, quand les
+  autres gagnent cent fois. Ce n est pas un rate : 1 344 tortues sur 10 000
+  portent ce tag. C est la SELECTIVITE.
+
+  `lignes` porte la reponse, deja mise en forme — ce sont EXACTEMENT les lignes
+  que le chargement mongosh a rangees dans la collection `reference`. Si le
+  portage Spring posait une autre question, elles ne colleraient pas.
+
+  Ajouter `?optimisee=true` a l URL pour jouer la version reecrite (elle n a de
+  sens qu une fois la correction posee).
+}

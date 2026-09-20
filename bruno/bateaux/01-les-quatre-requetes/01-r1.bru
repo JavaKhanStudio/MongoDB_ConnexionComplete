@@ -1,0 +1,33 @@
+meta {
+  name: R1 — Le carnet de bord d un bateau
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{hote}}/api/bateaux/requetes/R1
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+  res.body.mesures[0].rendus: eq 25
+}
+
+docs {
+  Au point de depart : 25 lignes, 94 500 documents lus, COLLSCAN.
+
+  Une egalite sur un champ : `EscaleRepository.findByBateau`.
+
+  A regarder dans la reponse : `depart` est ABSENT sur les escales en cours, et
+  la ligne ecrit « ENCORE A QUAI ». L information est portee par l absence du
+  champ, pas par une valeur.
+
+  `lignes` porte la reponse, deja mise en forme — ce sont EXACTEMENT les lignes
+  que le chargement mongosh a rangees dans la collection `reference`. Si le
+  portage Spring posait une autre question, elles ne colleraient pas.
+
+  Ajouter `?optimisee=true` a l URL pour jouer la version reecrite (elle n a de
+  sens qu une fois la correction posee).
+}

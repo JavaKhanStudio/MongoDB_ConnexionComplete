@@ -1,0 +1,37 @@
+meta {
+  name: R3 — Ce qu une region a sorti sur un mois
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{hote}}/api/dune/requetes/R3
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+  res.body.mesures[0].rendus: eq 5
+}
+
+docs {
+  Au point de depart : 5 lignes, 38 585 documents lus et 1 085 cles, COLLSCAN+LOOKUP.
+
+  La region n est PAS dans la collecte : elle est dans le puits. Il faut donc
+  aller la chercher — pour les 37 500 collectes — avant de pouvoir jeter celles
+  qui ne sont pas de cette region.
+
+  Aucun index sur `collectes` ne peut servir ce filtre : IL N Y A RIEN A
+  INDEXER. C est la seule des quatre dont le TEXTE change a la correction.
+
+  Cote Spring : un `Aggregation` construit avec l API typee, joue par
+  `MongoTemplate`. Le repository ne sait pas faire un `$lookup`.
+
+  `lignes` porte la reponse, deja mise en forme — ce sont EXACTEMENT les lignes
+  que le chargement mongosh a rangees dans la collection `reference`. Si le
+  portage Spring posait une autre question, elles ne colleraient pas.
+
+  Ajouter `?optimisee=true` a l URL pour jouer la version reecrite (elle n a de
+  sens qu une fois la correction posee).
+}

@@ -1,0 +1,31 @@
+meta {
+  name: R2 — Les observations d un site sur une annee
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{hote}}/api/tortues/requetes/R2
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+  res.body.mesures[0].rendus: eq 179
+}
+
+docs {
+  Au point de depart : 179 lignes, 90 000 documents lus, COLLSCAN+TRI.
+
+  Une egalite, un intervalle, un tri. Meme piege que sur les deux autres
+  sujets : la requete derivee ne sait pas poser deux conditions sur `date`, et
+  `Between` serait exclusif des deux cotes. `@Query`, donc.
+
+  `lignes` porte la reponse, deja mise en forme — ce sont EXACTEMENT les lignes
+  que le chargement mongosh a rangees dans la collection `reference`. Si le
+  portage Spring posait une autre question, elles ne colleraient pas.
+
+  Ajouter `?optimisee=true` a l URL pour jouer la version reecrite (elle n a de
+  sens qu une fois la correction posee).
+}

@@ -1,0 +1,36 @@
+meta {
+  name: Optimiser (ECRIT)
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{hote}}/api/tortues/optimiser
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+  res.body.reponseInchangee: eq true
+}
+
+docs {
+  LA CORRECTION, en un appel.
+
+  Attendu : R1 119 x, R2 503 x, R3 1 377 x — et R4 **7,4 x** seulement.
+
+  Ce 7,4 x est la lecon du sujet, pas un echec de la correction : un index ne
+  paie que ce qu il ecarte, et `{ tags: 1 }` n ecarte que huit documents sur dix.
+  Le chiffre qui decide s appelle la selectivite, et on le regarde AVANT de
+  poser l index.
+
+  `reponseInchangee: true` est le verdict : la reference etendue, contrairement
+  a un index, PEUT changer la reponse si elle est mal recopiee.
+
+  POST et non GET, parce que ca ECRIT : des index, et un champ recopie sur des
+  dizaines de milliers de documents. Un GET ne doit jamais faire ca — un
+  navigateur ou un proxy le rejouerait tout seul.
+
+  Tout se defait par `05-remettre`.
+}
