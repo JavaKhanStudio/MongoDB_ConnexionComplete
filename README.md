@@ -7,6 +7,18 @@
 
 ---
 
+## Récupérer le projet
+
+```bash
+git clone https://github.com/JavaKhanStudio/MongoDB_ConnexionComplete.git
+cd MongoDB_ConnexionComplete
+```
+
+Tout tient sur `main` : il n'y a pas de branche `correction` ici, ce dépôt
+**est** la correction.
+
+---
+
 ## Ce que ce dépôt contient
 
 Les requêtes, la correction, **et les données** — pas sous forme de dump :
