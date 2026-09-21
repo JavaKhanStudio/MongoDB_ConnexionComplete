@@ -14,8 +14,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
  *
  * <p>Spring Data sait faire autrement : {@code @TypeAlias} et une
  * hierarchie de classes, avec {@code _class} en base. On ne le fait pas
- * ici — le document existait AVANT l'application, ecrit par mongosh, et
- * il n'a pas de {@code _class}. C'est le cas le plus frequent en vrai :
+ * ici — le document est ecrit en {@code Document} brut par le
+ * chargement, comme mongosh l'ecrivait, et il n'a pas de {@code _class}.
+ * C'est le cas le plus frequent en vrai :
  * on se branche sur une base qui ne sait rien de Java.
  *
  * <p>{@code _id} est l'IMO : une cle metier unique, stable et deja

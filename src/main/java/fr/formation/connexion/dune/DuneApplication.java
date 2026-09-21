@@ -1,6 +1,6 @@
 package fr.formation.connexion.dune;
 
-import org.springframework.boot.SpringApplication;
+import fr.formation.connexion.commun.Lancement;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
@@ -20,6 +20,10 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
  *   <li>le profil {@code dune}, ajoute au demarrage, apporte le port et
  *       le nom de la base ({@code application-dune.yml}).</li>
  * </ul>
+ *
+ * <p>Lance avec {@code --charger}, la meme application ne sert rien :
+ * elle refait la base a partir de la graine et s'arrete
+ * ({@link Lancement}).
  */
 @SpringBootApplication(scanBasePackages = {
         "fr.formation.connexion.commun",
@@ -28,8 +32,6 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 public class DuneApplication {
 
     public static void main(String[] args) {
-        SpringApplication app = new SpringApplication(DuneApplication.class);
-        app.setAdditionalProfiles("dune");
-        app.run(args);
+        Lancement.demarrer(DuneApplication.class, "dune", args);
     }
 }

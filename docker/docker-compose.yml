@@ -1,0 +1,37 @@
+name: connexion
+
+# Le MongoDB de CE depot. Les trois bases s'y fabriquent en Java, a partir
+# d'une graine (make bases) : le depot n'a besoin d'aucun autre pour tourner.
+#
+# Le port est 27061, et pas 27051 : 27051 est celui de MongoDB_Optimisation,
+# le projet mongosh dont celui-ci est le portage. Les deux serveurs peuvent
+# ainsi tourner cote a cote — c'est d'ailleurs comme ca qu'on verifie que
+# les deux chargements rendent la meme base (make comparer).
+#
+# wiredTigerCacheSizeGB est FIXE a 1 Go, comme chez le voisin : le defaut
+# est la moitie de la RAM de la machine, et la colonne « ms » ne serait pas
+# la meme d'un poste a l'autre. 1 Go contient les trois bases a VOLUME=1.
+
+services:
+
+  mongo:
+    image: mongo:8.0
+    container_name: connexion-mongo
+    environment:
+      # MongoDB 8 refuse de demarrer sur un noyau >= 6.19 (SERVER-121912).
+      # Meme contournement que MongoDB_Optimisation et MongoDB_ACID.
+      GLIBC_TUNABLES: glibc.pthread.rseq=1
+    command: ["--bind_ip_all", "--wiredTigerCacheSizeGB=1"]
+    ports:
+      - "27061:27017"
+    volumes:
+      - mongodata:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 20s
+
+volumes:
+  mongodata:

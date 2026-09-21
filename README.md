@@ -7,26 +7,35 @@
 
 ---
 
-## Ce que ce dépôt contient, et ce qu'il ne contient pas
+## Ce que ce dépôt contient
 
-Il contient **les requêtes et la correction**. Il ne contient **pas les
-données** : elles se fabriquent dans
-[`MongoDB_Optimisation`](https://github.com/JavaKhanStudio/MongoDB_Optimisation),
-à partir d'une graine, et les trois applications s'y branchent.
+Les requêtes, la correction, **et les données** — pas sous forme de dump :
+chaque application sait refaire sa base à partir d'une graine. Le dépôt se
+suffit à lui-même : son propre MongoDB (`docker/docker-compose.yml`, port
+**27061**), ses trois chargements en Java, ses trois API.
 
-C'est tout le sens du titre. Le projet « pur MongoDB » fabrique la base, la
-mesure et la corrige en `mongosh` ; le projet Spring **se branche sur la même
-base**, pose les mêmes questions, et pose les mêmes index. On ne recommence
-rien : on se connecte.
+C'est le même tirage que [`MongoDB_Optimisation`](https://github.com/JavaKhanStudio/MongoDB_Optimisation),
+porté bit pour bit : **même graine, même base** — la même, au document près et
+au type de chaque nombre près, que celle que les `charger.js` fabriquent en
+`mongosh`. Les chiffres de ce README sont donc ceux du projet mongosh, et
+`make comparer` le vérifie.
 
 ```bash
-make bases          # démarre MongoDB (27051) et charge dune, tortues, bateaux
-make construire     # compile et fabrique les trois jars
+make bases          # démarre MongoDB (27061), compile, et fabrique dune, tortues, bateaux
 make dune           # http://localhost:8081
 ```
 
-`make aide` liste tout. `make bases OPTIMISATION=/chemin/vers/le/dépôt` si le
-dépôt voisin n'est pas à côté.
+`make aide` liste tout. `make bases VOLUME=10` en met dix fois plus ;
+`make charger-dune` refait une seule base, en deux secondes.
+
+Le chargement, c'est la même application lancée autrement :
+
+```bash
+java -jar target/connexion-complete-1.0.0-dune.jar --charger [--volume=10] [--graine=20260920]
+```
+
+Avec `--charger`, pas de serveur web : elle jette la base, la refait, et rend
+la main (`commun/Lancement.java`).
 
 ---
 
@@ -124,10 +133,10 @@ chiffre qui décide s'appelle la **sélectivité**.
 
 Optimiser, c'est changer le chemin **sans changer la réponse**.
 
-Le chargement `mongosh` a enregistré, dans la collection `reference` de chaque
-base, ce que chaque requête répond — calculé à part, à partir des données
-générées, *pas* en rejouant les requêtes du sujet. C'est **cette collection-là**
-que le Java interroge :
+Le chargement a enregistré, dans la collection `reference` de chaque base, ce
+que chaque requête répond — accumulé au vol pendant qu'il fabrique les
+documents, *pas* en rejouant les requêtes du sujet. C'est **cette
+collection-là** que le banc interroge :
 
 ```
 === La reponse n a pas change ? =======================================
@@ -139,9 +148,40 @@ Deux choses en découlent, et les deux comptent :
 * un index ne change jamais une réponse ; **une référence étendue mal recopiée,
   si**. Le banc le voit tout de suite ;
 * le portage Spring est jugé par le **même arbitre** que le mongosh. Les lignes
-  que le Java met en forme doivent être, caractère pour caractère, celles du
-  chargement. Si elles ne le sont pas, la requête Spring ne pose pas la même
-  question — et c'est un bug du portage, pas du serveur.
+  que les requêtes Spring mettent en forme doivent être, caractère pour
+  caractère, celles du chargement. Si elles ne le sont pas, la requête Spring
+  ne pose pas la même question — et c'est un bug du portage, pas du serveur.
+
+Et l'arbitre lui-même est gardé : la collection `reference` que le Java écrit
+est, ligne pour ligne, celle que `charger.js` écrit côté mongosh.
+
+---
+
+## `make comparer` — les deux chargements rendent-ils la même base ?
+
+La preuve du portage des chargements, et le garde-fou de `commun/Formats.java`.
+Il demande le dépôt voisin (`OPTIMISATION=../MongoDB_Optimisation` par défaut) :
+chaque base est fabriquée deux fois sur **son** serveur (27051), par
+`charger.js` sous son nom et par le Java sous `j_<sujet>`, puis
+`tools/comparer-chargements.js` compare chaque collection, document par
+document, en EJSON **canonique** — l'ordre des champs et le type de chaque
+nombre compris.
+
+```
+  == dune : mongosh contre Java
+  ok  collectes                37500 documents, identiques
+  ...
+  ok  reference                    4 documents, identiques
+  dune et j_dune : la meme base, type compris.
+```
+
+Le type compte : JavaScript n'a qu'une sorte de nombre, et mongosh en fait un
+`int` BSON quand il est entier, un `double` sinon. Une tonne tirée à 150,00 est
+un `int` côté mongosh ; le Java fait pareil (`Tirage.nombre`).
+
+Pourquoi il faut ce garde-fou : chargement et requêtes mettent leurs lignes en
+forme avec les **mêmes** `Formats`. Changer une largeur de colonne y change les
+deux côtés à la fois, et le juge ne voit rien — `make comparer`, si.
 
 Essayer, sur une base au point de départ :
 `GET /api/dune/mesurer?optimisees=true`. R3 rend 0 ligne au lieu de 5, et le
@@ -203,13 +243,18 @@ L'exécution `repackage` héritée du parent est désactivée : avec trois class
 ```
 pom.xml                     un module, trois jars
 Makefile                    make aide
+docker/docker-compose.yml   le MongoDB du dépôt, sur 27061
+tools/comparer-chargements.js   make comparer : Java contre mongosh, document par document
 src/main/resources/
     application.yml         ce qui est commun — dont auto-index-creation: false
     application-<s>.yml     le port et la base de chaque application
 src/main/java/fr/formation/connexion/
     commun/
         Banc.java           LE BANC : les compteurs du serveur, le plan, les tableaux
-        Reference.java      LE JUGE : la collection `reference`, écrite par mongosh
+        Reference.java      LE JUGE : la collection `reference`, écrite au chargement
+        Tirage.java         mulberry32 : l'aléatoire à graine, bit pour bit celui de outils.js
+        Chargement.java     jeter la base et la refaire — le squelette des trois charger.js
+        Lancement.java      servir, ou --charger
         Bases.java          les index posés, et « tout défaire »
         Explications.java   explain(), que Spring Data n'expose pas
         Formats.java        g / d / n / deci / moyenne / jjmmaaaa, portés de outils.js
@@ -218,6 +263,7 @@ src/main/java/fr/formation/connexion/
         SujetController.java  les sept endpoints, une seule fois pour les trois
     <sujet>/
         <S>Application.java   le point d'entrée
+        chargement/<S>Chargement.java   LA BASE, tirée de la graine (portage de charger.js)
         model/                les @Document — et le document polymorphe en Java
         repo/                 les MongoRepository, et là où la requête dérivée s'arrête
         service/
@@ -239,5 +285,6 @@ bruno/<sujet>/              une collection Bruno par application
 | **`auto-index-creation` doit rester à `false`, explicitement.** Si Spring posait les index au démarrage à partir de `@Indexed`, la mesure « avant » serait déjà optimisée et on ne verrait jamais le `COLLSCAN`. | `application.yml` |
 | **`plan()` ment sur la requête couverte.** Le parcours de tout l'arbre d'`explain` ramasse aussi les `rejectedPlans`, dont un porte un `FETCH` : l'arbre entier répond « IXSCAN » là où le plan retenu dit `PROJECTION_COVERED`. Le banc s'en accommode (c'est ce que fait le mongosh) ; l'exploration, non — elle lit `queryPlanner.winningPlan`. | `commun/Banc.java` |
 | **Un pipeline qui écrit se donne au driver tel quel.** `$merge` n'a rien à rendre : `toCollection()` le joue, là où `MongoTemplate` voudrait mapper un résultat qui n'existe pas. Idem pour `$sum` imbriqué dans `$sum` — une traduction approximative changerait la réponse sans le dire. | `*/service/*Optimisation.java`, `commun/Etapes.java` |
-| **Le document polymorphe est plus souple que le record.** Une collecte `REUSSIE` n'a pas de `cause` ; le record a le nombre de composants qu'il a. Ce qui est absent arrive à `null` — et ressort **absent** du JSON, parce que `default-property-inclusion: non_null` est posé. Pas de `@TypeAlias` ni de `_class` : le document existait avant l'application. | `*/model/*.java` |
+| **Le document polymorphe est plus souple que le record.** Une collecte `REUSSIE` n'a pas de `cause` ; le record a le nombre de composants qu'il a. Ce qui est absent arrive à `null` — et ressort **absent** du JSON, parce que `default-property-inclusion: non_null` est posé. Pas de `@TypeAlias` ni de `_class` : le chargement écrit des `Document` bruts, comme mongosh — le modèle Java lit une base qui ne sait rien de lui. | `*/model/*.java` |
 | **Le banc suppose qu'on est seul sur le serveur.** `serverStatus().metrics.queryExecutor` est global : deux navigateurs qui rafraîchissent en même temps, et les deux mesures se mélangent. C'est le prix d'un compteur qui, lui, ne dépend pas de la forme du plan. | `commun/Banc.java` |
+| **Le tirage se porte au bit près, pas à peu près.** mulberry32 tient sur des `int` : Java déborde exactement comme `Math.imul` et les opérateurs binaires de JavaScript. Mais chaque tirage doit être consommé dans le **même ordre** que le .js — `for (k = 0; k < t.entier(2, 3); k++)` retire la borne à chaque tour, le `++k` des capitaines avance deux fois, `brevet` est tiré *après* les commandements. Un appel de plus ou de moins, et toute la suite glisse. | `*/chargement/*Chargement.java`, `commun/Tirage.java` |

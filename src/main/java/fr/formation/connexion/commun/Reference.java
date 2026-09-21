@@ -13,10 +13,11 @@ import java.util.Map;
  * La reponse de reference — le juge.
  *
  * <p>Optimiser, c'est changer le chemin sans changer la reponse. Le
- * chargement mongosh ({@code charger.js}) a donc enregistre, dans la
- * collection {@code reference}, ce que chaque requete repond sur la base
- * fraiche — calcule a part, a partir des donnees generees, PAS en
- * rejouant les requetes du sujet.
+ * chargement ({@link Chargement}, portage de {@code charger.js}) a donc
+ * enregistre, dans la collection {@code reference}, ce que chaque requete
+ * repond sur la base fraiche — calcule a part, a partir des donnees
+ * generees, PAS en rejouant les requetes du sujet. Cette collection est
+ * celle du mongosh, au caractere pres : {@code make comparer} le verifie.
  *
  * <p>C'est cette collection-la que le Java interroge. Deux choses en
  * decoulent, et les deux comptent :
@@ -50,7 +51,7 @@ public class Reference {
         }
         List<String> sortie = new ArrayList<>();
         if (attendu.isEmpty()) {
-            sortie.add("  (pas de reponse de reference : recharger la base cote MongoDB_Optimisation)");
+            sortie.add("  (pas de reponse de reference : recharger la base : make charger-" + mongo.getDb().getName() + ")");
             return new Verdict(true, sortie);
         }
         int ko = 0;

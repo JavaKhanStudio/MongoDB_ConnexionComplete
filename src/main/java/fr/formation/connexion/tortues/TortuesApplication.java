@@ -1,6 +1,6 @@
 package fr.formation.connexion.tortues;
 
-import org.springframework.boot.SpringApplication;
+import fr.formation.connexion.commun.Lancement;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
@@ -15,8 +15,6 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 public class TortuesApplication {
 
     public static void main(String[] args) {
-        SpringApplication app = new SpringApplication(TortuesApplication.class);
-        app.setAdditionalProfiles("tortues");
-        app.run(args);
+        Lancement.demarrer(TortuesApplication.class, "tortues", args);
     }
 }

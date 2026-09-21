@@ -10,10 +10,16 @@ import java.time.ZonedDateTime;
  *
  * <p>Ce n'est pas de la cosmetique : les lignes que ces fonctions
  * fabriquent sont comparees, CARACTERE PAR CARACTERE, a celles que le
- * chargement mongosh a rangees dans la collection {@code reference}.
- * Une colonne d'une largeur differente, et {@link Reference} declare la
- * reponse changee. C'est ce qui prouve que le portage en Java repond
- * bien a la meme question que le mongosh.
+ * chargement a rangees dans la collection {@code reference}. Une colonne
+ * d'une largeur differente, et {@link Reference} declare la reponse
+ * changee. C'est ce qui prouve que le portage en Java repond bien a la
+ * meme question que le mongosh.
+ *
+ * <p>ATTENTION : le chargement Java ({@link Chargement}) met ses lignes en
+ * forme avec ces MEMES fonctions. Changer une largeur ici change donc les
+ * deux cotes a la fois, et le juge ne voit rien — mais la collection
+ * {@code reference} ne serait plus celle du mongosh, et {@code make
+ * comparer} le dit. C'est lui qui garde ce fichier.
  */
 public final class Formats {
 

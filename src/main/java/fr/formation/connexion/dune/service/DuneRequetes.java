@@ -29,7 +29,7 @@ import static fr.formation.connexion.commun.Formats.jjmmaaaa;
  * ne s'est pas encore demande ce que le serveur allait devoir lire.
  *
  * <p>LA SEULE REGLE : la REPONSE ne change pas. Elle a ete calculee au
- * chargement mongosh, a part, a partir des donnees generees — pas en
+ * chargement ({@code DuneChargement}), a part, a partir des donnees generees — pas en
  * rejouant ces requetes-ci. Le banc la recompare a chaque passage. Le
  * chemin t'appartient, la reponse non.
  */
@@ -38,7 +38,7 @@ public class DuneRequetes {
 
     /**
      * Les valeurs sur lesquelles les quatre requetes portent. Ce sont
-     * celles de {@code requetes.js} : le chargement s'en est servi pour
+     * celles de {@code requetes.js} : le chargement s'en sert pour
      * calculer la reponse attendue, les changer ici ferait mentir la
      * verification.
      */

@@ -1,6 +1,6 @@
 package fr.formation.connexion.bateaux;
 
-import org.springframework.boot.SpringApplication;
+import fr.formation.connexion.commun.Lancement;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
@@ -15,8 +15,6 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 public class BateauxApplication {
 
     public static void main(String[] args) {
-        SpringApplication app = new SpringApplication(BateauxApplication.class);
-        app.setAdditionalProfiles("bateaux");
-        app.run(args);
+        Lancement.demarrer(BateauxApplication.class, "bateaux", args);
     }
 }

@@ -15,10 +15,10 @@ docs {
 
   ## Avant d ouvrir quoi que ce soit
 
-  1. La base doit tourner et etre chargee. Elle vient du depot
-     MongoDB_Optimisation, pas de celui-ci :
+  1. La base doit tourner et etre chargee. Elle se fabrique ici, a partir
+     d une graine (depuis la racine de MongoDB_ConnexionComplete) :
 
-         cd ../MongoDB_Optimisation && make demarrer && make dune
+         make bases          (ou, pour elle seule : make charger-dune)
 
   2. L application :
 
