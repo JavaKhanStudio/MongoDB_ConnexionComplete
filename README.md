@@ -39,6 +39,7 @@ make dune           # http://localhost:8081
 
 `make aide` liste tout. `make bases VOLUME=10` en met dix fois plus ;
 `make charger-dune` refait une seule base, en deux secondes.
+Sous Windows, voir [« Sous Windows »](#sous-windows).
 
 Le chargement, c'est la même application lancée autrement :
 
@@ -48,6 +49,34 @@ java -jar target/connexion-complete-1.0.0-dune.jar --charger [--volume=10] [--gr
 
 Avec `--charger`, pas de serveur web : elle jette la base, la refait, et rend
 la main (`commun/Lancement.java`).
+
+---
+
+## Sous Windows
+
+Pas besoin de `make`, ni de WSL. Il faut **Docker Desktop**, installé et lancé,
+**Git** et un **JDK 21 ou plus récent** (`java -version`). Maven n'est pas à
+installer : `mvnw.cmd` le télécharge. Dans PowerShell :
+
+```powershell
+git clone https://github.com/JavaKhanStudio/MongoDB_ConnexionComplete.git
+cd MongoDB_ConnexionComplete
+.\make bases
+.\make dune
+```
+
+`.\make` remplace `make` dans **toutes** les commandes de ce README, réglages
+compris : `.\make bases VOLUME=10`, `.\make charger-dune`, `.\make aide`. Dans
+l'invite de commandes (`cmd`), `make bases` suffit. `.\make bruno-dune` demande
+`bru` (`npm install -g @usebruno/cli`), comme sous Linux ; `.\make comparer`
+demande `MongoDB_Optimisation` cloné à côté, qui a lui aussi son `.\make`.
+
+C'est `make.cmd`, à la racine, qui lance `docker/windows.ps1` : les mêmes
+commandes `docker`, `java` et `bru` que le `Makefile`, cible pour cible. Il passe
+outre la politique d'exécution de PowerShell, qu'on n'a donc pas à toucher.
+
+Sous macOS, les commandes sont celles de Linux ; `make` vient avec les outils en
+ligne de commande de Xcode (`xcode-select --install`).
 
 ---
 
@@ -255,6 +284,7 @@ L'exécution `repackage` héritée du parent est désactivée : avec trois class
 ```
 pom.xml                     un module, trois jars
 Makefile                    make aide
+make.cmd                    le Makefile pour Windows : lance docker/windows.ps1
 docker/docker-compose.yml   le MongoDB du dépôt, sur 27061
 tools/comparer-chargements.js   make comparer : Java contre mongosh, document par document
 src/main/resources/
