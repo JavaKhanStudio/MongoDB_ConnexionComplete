@@ -1,5 +1,7 @@
 # Connexion complète
 
+<p align="center"><img src="icon.png" width="220" alt="Un pont de pierre en arche au-dessus de l'eau"></p>
+
 > Les trois corrections de « **Optimisation d'une collection** », qui étaient du
 > mongosh, écrites cette fois en **Spring Data MongoDB**. Un dépôt, une racine
 > commune, trois paquets, **trois points d'entrée Spring**, et un dossier Bruno
